@@ -1,3 +1,37 @@
+# # TITANIC Passanger Survivals DATA SCIENCE & MACHINE LEARNING PROJECT
+# ## Complete Data Analysis, Visualization, and Predictive Modeling
+
+# ## 1. IMPORT LIBRARIES
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+
+# Machine Learning Libraries
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, StratifiedKFold
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+
+# ML Models
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+
+# Model Evaluation
+from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, 
+                             confusion_matrix, classification_report, roc_auc_score, 
+                             roc_curve, auc)
+
+# Feature Selection
+from sklearn.feature_selection import SelectKBest, chi2, RFE, mutual_info_classif
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,21 +39,16 @@ import seaborn as sns
 
 # For Excel files, you need to install openpyxl
 # Run: pip install openpyxl
-
-
 df = pd.read_csv("Titanic-Dataset.csv")
 df
 df.shape
 
 df.info()
 df.columns
+
+
 # ALL COLUMNS - MEAN, MEDIAN, MODE
-
-
-
-# ============================================
 # NUMERICAL COLUMNS
-# ============================================
 
 #age
 df['Age'].mean()
@@ -65,8 +94,6 @@ df['Pclass'].isnull().sum()
 
 # ============================================
 # CATEGORICAL COLUMNS
-# ============================================
-
 #SEX
 df['Sex'].mode()
 df['Sex'].isnull().sum()
@@ -89,7 +116,6 @@ df.tail()
 # 3. CHECK MISSING VALUES
 
 df.isnull().sum()
-
 
 # Visualize missing values
 df.isnull().sum().plot(kind='bar')
@@ -115,13 +141,11 @@ df['Sex'].value_counts().plot(kind='bar')
 plt.title("Gender Distribution")
 plt.show()
 
-
 # Pclass
 df['Pclass'].value_counts()
 df['Pclass'].value_counts().plot(kind='bar')
 plt.title("Passenger Class Distribution")
 plt.show()
-
 
 # Age
 df['Age'].plot(kind='hist', bins=20)
@@ -131,7 +155,6 @@ plt.show()
 df['Age'].plot(kind='box')
 plt.title("Age Box Plot")
 plt.show()
-
 
 # Fare
 df['Fare'].plot(kind='hist', bins=20)
@@ -183,14 +206,11 @@ plt.show()
 # Female passengers who survived
 df.loc[(df['Sex'] == 'female') & (df['Survived'] == 1)]
 
-
 # Male passengers who died
 df.loc[(df['Sex'] == 'male') & (df['Survived'] == 0)]
 
-
 # First class female survivors
 df.loc[(df['Pclass'] == 1) & (df['Sex'] == 'female') & (df['Survived'] == 1)]
-
 
 # Passengers with Age > 60
 df.loc[df['Age'] > 60]
@@ -240,6 +260,7 @@ print("\n6. FARE GROUP:")
 print(df[['Fare', 'FareGroup']].head(10))
 df
 
+# ============================================
 # GROUP BY FUNCTION
 1. GROUPBY 'SEX' 
 
@@ -250,7 +271,6 @@ df.groupby('Sex')['Age'].max()
 df.groupby('Sex')['Age'].count()
 df.groupby('Sex')['Age'].std()
 
-
 df.groupby('Sex')['Fare'].mean()
 df.groupby('Sex')['Fare'].median()
 df.groupby('Sex')['Fare'].min()
@@ -258,20 +278,17 @@ df.groupby('Sex')['Fare'].max()
 df.groupby('Sex')['Fare'].count()
 df.groupby('Sex')['Fare'].std()
 
-
 df.groupby('Sex')['SibSp'].mean()
 df.groupby('Sex')['SibSp'].median()
 df.groupby('Sex')['SibSp'].min()
 df.groupby('Sex')['SibSp'].max()
 df.groupby('Sex')['SibSp'].count()
 
-
 df.groupby('Sex')['Parch'].mean()
 df.groupby('Sex')['Parch'].median()
 df.groupby('Sex')['Parch'].min()
 df.groupby('Sex')['Parch'].max()
 df.groupby('Sex')['Parch'].count()
-
 
 df.groupby('Sex')['Survived'].mean()
 df.groupby('Sex')['Survived'].count()
@@ -352,3 +369,170 @@ df.groupby('Survived')['Parch'].median()
 df.groupby('Survived')['Parch'].min()
 df.groupby('Survived')['Parch'].max()
 df.groupby('Survived')['Parch'].count()
+
+# ============================================
+# EXTRA STATISTICS (MIN, MAX, STD, SKEW, KURTOSIS)
+#AGE EXTRA
+df['Age'].min()
+df['Age'].max()
+df['Age'].std()
+df['Age'].skew()
+df['Age'].kurtosis()
+
+#FARE EXTRA
+df['Fare'].min()
+df['Fare'].max()
+df['Fare'].std()
+df['Fare'].skew()
+df['Fare'].kurtosis()
+
+#SIBSP EXTRA
+df['SibSp'].min()
+df['SibSp'].max()
+df['SibSp'].std()
+
+#PARCH EXTRA
+df['Parch'].min()
+df['Parch'].max()
+df['Parch'].std()
+
+# ============================================
+#  PERCENTAGE CALCULATIONS
+
+#Survival Percentage
+df['Survived'].value_counts(normalize=True) * 100
+
+#Gender Percentage
+df['Sex'].value_counts(normalize=True) * 100
+
+#Pclass Percentage
+df['Pclass'].value_counts(normalize=True) * 100
+
+#Embarked Percentage
+df['Embarked'].value_counts(normalize=True) * 100
+
+# ============================================
+#  NEW VISUALIZATIONS
+
+#Pie Chart - Survival
+df['Survived'].value_counts().plot(kind='pie', autopct='%1.1f%%', colors=['red','green'])
+plt.title("Survival Percentage")
+plt.ylabel("")
+plt.show()
+
+#Pie Chart - Gender
+df['Sex'].value_counts().plot(kind='pie', autopct='%1.1f%%', colors=['pink','blue'])
+plt.title("Gender Percentage")
+plt.ylabel("")
+plt.show()
+
+#Density Plot - Age
+df['Age'].plot(kind='density')
+plt.title("Age Density Plot")
+plt.show()
+
+#Density Plot - Fare
+df['Fare'].plot(kind='density')
+plt.title("Fare Density Plot")
+plt.show()
+
+#Scatter Plot - Age vs Fare
+plt.scatter(df['Age'], df['Fare'], alpha=0.5)
+plt.title("Age vs Fare")
+plt.xlabel("Age")
+plt.ylabel("Fare")
+plt.show()
+
+# ============================================
+# GROUPBY NEW COLUMNS
+
+#GROUPBY 'AGEGROUP'
+df.groupby('AgeGroup')['Survived'].mean()
+df.groupby('AgeGroup')['Survived'].count()
+df.groupby('AgeGroup')['Survived'].sum()
+df.groupby('AgeGroup')['Fare'].mean()
+
+#GROUPBY 'FAMILYSIZE'
+df.groupby('FamilySize')['Survived'].mean()
+df.groupby('FamilySize')['Survived'].count()
+df.groupby('FamilySize')['Survived'].sum()
+
+#GROUPBY 'ISALONE'
+df.groupby('IsAlone')['Survived'].mean()
+df.groupby('IsAlone')['Survived'].count()
+df.groupby('IsAlone')['Survived'].sum()
+
+#GROUPBY 'TITLE'
+df.groupby('Title')['Survived'].mean()
+
+# ============================================
+# NEW VISUALIZATIONS FOR NEW COLUMNS
+
+#Survival by Age Group
+df.groupby('AgeGroup')['Survived'].mean().plot(kind='bar', color='teal')
+plt.title("Survival Rate by Age Group")
+plt.xlabel("Age Group")
+plt.ylabel("Survival Rate")
+plt.show()
+
+#Survival by Family Size
+df.groupby('FamilySize')['Survived'].mean().plot(kind='bar', color='coral')
+plt.title("Survival Rate by Family Size")
+plt.xlabel("Family Size")
+plt.ylabel("Survival Rate")
+plt.show()
+
+#Survival by IsAlone
+df.groupby('IsAlone')['Survived'].mean().plot(kind='bar', color=['red','green'])
+plt.title("Survival Rate by IsAlone")
+plt.xlabel("Is Alone (0=No, 1=Yes)")
+plt.ylabel("Survival Rate")
+plt.show()
+
+# ============================================
+# DENSITY PLOTS BY SURVIVAL
+#Age Density by Survival
+df[df['Survived']==0]['Age'].plot(kind='density', label='Died', color='red')
+df[df['Survived']==1]['Age'].plot(kind='density', label='Survived', color='green')
+plt.title("Age Density by Survival")
+plt.legend()
+plt.show()
+
+#Fare Density by Survival
+df[df['Survived']==0]['Fare'].plot(kind='density', label='Died', color='red')
+df[df['Survived']==1]['Fare'].plot(kind='density', label='Survived', color='green')
+plt.title("Fare Density by Survival")
+plt.legend()
+plt.show()
+
+# ============================================
+# OUTLIER DETECTION
+#Age Outliers
+Q1 = df['Age'].quantile(0.25)
+Q3 = df['Age'].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+len(df[(df['Age'] < lower) | (df['Age'] > upper)])
+
+#Fare Outliers
+Q1 = df['Fare'].quantile(0.25)
+Q3 = df['Fare'].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+len(df[(df['Fare'] < lower) | (df['Fare'] > upper)])
+
+# ============================================
+# CORRELATION WITH SURVIVAL
+df[numeric_cols].corr()['Survived'].sort_values(ascending=False)
+
+# ============================================
+# SAVE CLEANED DATA
+df.to_csv('Titanic_Cleaned.csv', index=False)
+
+# ============================================
+# FINAL DATAFRAME INFO
+df.info()
+df.shape
+df.columns
